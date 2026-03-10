@@ -4,22 +4,27 @@ import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
+import { HttpException, HttpStatus } from '@nestjs/common';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-  ) {}
+  ) { }
 
   async create(createUserDto: CreateUserDto) {
-    try {
-      const user = this.userRepository.create(createUserDto);
-      return await this.userRepository.save(user);  
-    } catch (error) {
-      throw new error('dsjflksdjfl')
-    }
-    
+    const userExist = this.userRepository.findOne({
+      where: { email: createUserDto.email }
+    });
+    if (userExist)
+      throw new HttpException({
+        statusCode: HttpStatus.CONFLICT,
+        message: 'El correo electronico ya existe',
+        error: 'CONFLICT'
+      }, HttpStatus.CONFLICT)
+
+    return await this.userRepository.save(createUserDto);
   }
 
   async findAll() {
