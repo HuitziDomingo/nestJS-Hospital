@@ -4,8 +4,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
-import { CalendarModule } from './calendar/calendar.module';
-import { User } from './user/entities/user.entity';
 import { AuthModule } from './auth/auth.module';
 
 @Module({
@@ -21,15 +19,14 @@ import { AuthModule } from './auth/auth.module';
       username: process.env.DB_USER || 'postgres',
       password: process.env.DB_PASSWORD || 'postgres',
       database: process.env.DB_NAME || 'hospital_db',
-      entities: [User],
+      autoLoadEntities: true,
       synchronize: process.env.NODE_ENV !== 'production',
       logging: process.env.NODE_ENV !== 'production',
     }),
     UserModule,
-    CalendarModule,
     AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }

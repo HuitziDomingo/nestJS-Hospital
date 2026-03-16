@@ -13,7 +13,7 @@ export class UserService {
   ) { }
 
   async create(createUserDto: CreateUserDto) {
-    const userExist = this.userRepository.findOne({ where: { email: createUserDto.email } })
+    const userExist = await this.userRepository.findOne({ where: { email: createUserDto.email } })
     if (userExist)
       throw new HttpException({
         statusCode: HttpStatus.CONFLICT,
