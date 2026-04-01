@@ -5,6 +5,7 @@ import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
 import { User } from './entities/user.entity'
 import { HttpException, HttpStatus } from '@nestjs/common'
+import * as bcrypt from 'bcrypt'
 @Injectable()
 export class UserService {
   constructor(
@@ -21,7 +22,14 @@ export class UserService {
         error: 'CONFLICT',
       }, HttpStatus.CONFLICT)
 
-    return await this.userRepository.save(createUserDto)
+    // Encriptar la contraseña antes de guardar el usuario
+    const hashedPassword = await bcrypt.hash(createUserDto.password, 10)
+    const newUser = {
+      ...createUserDto,
+      password: hashedPassword,
+    }
+
+    return await this.userRepository.save(newUser)
   }
 
   async findAll() {
