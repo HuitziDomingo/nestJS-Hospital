@@ -18,6 +18,9 @@ export class Auth {
   @Column({ type: 'bigint', nullable: true })
   telephone: bigint | null;
 
+  @Column({ type: 'boolean', default: false })
+  isActive: boolean;
+
   @CreateDateColumn()
   createdAt: Date;
 
